@@ -7,7 +7,31 @@ func Run(opts *Options) {
 		fmt.Printf("APITester.\n%s", opts.Summary())
 	}
 
-	RESTCall(opts, "GET", "/hello", nil)
-	RESTCall(opts, "GET", "/foobar", nil)
-	RESTCall(opts, "GET", "/exit", nil)
+	session := NewSession(opts)
+
+	serveraddr := opts.BaseURL[7:]
+
+	session.RESTCall(&APITest{
+		method: "GET",
+		path:   "/hello",
+		checker: APIStringResCheck{
+			statuscode: 200,
+			body:       fmt.Sprintf("Hello from %v\n", serveraddr),
+		},
+	})
+	session.RESTCall(&APITest{
+		method: "GET",
+		path:   "/foobar",
+		checker: APIStringResCheck{
+			statuscode: 404,
+		},
+	})
+	session.RESTCall(&APITest{
+		method: "GET",
+		path:   "/exit",
+		checker: APIStringResCheck{
+			statuscode: 200,
+			body:       fmt.Sprintf("Goodbye from %v\n", serveraddr),
+		},
+	})
 }

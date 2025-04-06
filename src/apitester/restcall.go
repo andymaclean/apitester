@@ -2,32 +2,46 @@ package apitester
 
 import (
 	"fmt"
-	"io"
+	"log"
 	"net/http"
-	"strings"
 )
 
-func RESTCall(opts *Options, method string, path string, body io.Reader) {
-	client := &http.Client{}
-	req, _ := http.NewRequest(method, opts.BaseURL+path, body)
+type RESTSession struct {
+	opts   *Options
+	client *http.Client
+}
 
-	if opts.Verbose {
-		fmt.Printf("REQ:  %s %s\n", method, path)
+func NewSession(opts *Options) *RESTSession {
+	return &RESTSession{
+		client: &http.Client{},
+		opts:   opts,
+	}
+}
+
+func (session *RESTSession) RESTCall(test *APITest) {
+
+	req, _ := http.NewRequest(test.method, session.opts.BaseURL+test.path, nil)
+
+	if session.opts.Verbose {
+		fmt.Printf("REQ:  %s %s\n", test.method, test.path)
 	}
 
-	resp, _ := client.Do(req)
-
-	var resbody string
+	resp, _ := session.client.Do(req)
 
 	if resp != nil {
-		buf := new(strings.Builder)
-		io.Copy(buf, resp.Body)
-		resbody = buf.String()
+
+		if session.opts.Verbose {
+			statuscode := resp.Status
+
+			fmt.Printf("RESP:  (%s)\n", statuscode)
+		}
+
+		if test.checker != nil {
+			OK, err := test.checker.CheckRes(resp)
+			if !OK {
+				log.Fatalf("Failed to run test: %v", err)
+			}
+		}
 	}
 
-	statuscode := resp.Status
-
-	if opts.Verbose {
-		fmt.Printf("RESP:  (%s) %s\n", statuscode, resbody)
-	}
 }

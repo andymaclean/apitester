@@ -26,8 +26,8 @@ echo "Server: ${server_cmd[@]}"
 
 ${server_cmd[@]} & 
 
+sleep 1
+
 echo "Test: $@"
 
 "$@"
-
-wait 
