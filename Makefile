@@ -1,12 +1,19 @@
 
 
+test_service_addr:="localhost:9995"
+test_service_url:="http://$(test_service_addr)"
+
 .PHONY:  all
 
-all:  apitester
+all:  bin/apitester
 
-apitester:
-	go build -o bin/apitester src/commands/apitester.go
+bin/apitester: src/apitester_main/*.go src/apitester/*.go
+	go build -o bin/apitester src/apitester_main/apitester.go
 
-test_server:
-	go build -o bin/test_server src/commands/test_server.go
+bin/test_server: src/test_server/*.go src/test_server_main/*.go
+	go build -o bin/test_server src/test_server_main/test_server.go
+
+e2etest:  bin/apitester bin/test_server
+	@echo "TEST SERVER ON $(test_service_addr)"	
+	./scripts/test_with_server ./bin/test_server --address $(test_service_addr) -- ./bin/apitester --verbose --baseurl $(test_service_url)
 
