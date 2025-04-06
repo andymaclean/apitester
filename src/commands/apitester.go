@@ -5,5 +5,8 @@ import (
 )
 
 func main() {
-	apitester.Run()
+	opts := apitester.DefaultOptions()
+	opts.ReadCommandArguments()
+
+	apitester.Run(&opts)
 }
