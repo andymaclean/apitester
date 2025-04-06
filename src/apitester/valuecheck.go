@@ -18,7 +18,7 @@ func (chk *StringEq) CheckVal(val *string) (bool, error) {
 	if *val == chk.val {
 		return true, nil
 	}
-	return false, fmt.Errorf("String is %v not %v", *val, chk.val)
+	return false, fmt.Errorf("string is %v not %v", *val, chk.val)
 }
 
 type IntEq struct {
@@ -29,5 +29,5 @@ func (chk *IntEq) CheckVal(val int) (bool, error) {
 	if val == chk.val {
 		return true, nil
 	}
-	return false, fmt.Errorf("Value is %v not %v", val, chk.val)
+	return false, fmt.Errorf("value is %v not %v", val, chk.val)
 }
