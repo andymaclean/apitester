@@ -18,24 +18,26 @@ type APITest struct {
 }
 
 type APIStringResCheck struct {
-	body       string
-	statuscode int
+	body   StringValueCheck
+	status IntValueCheck
 }
 
 func (params APIStringResCheck) CheckRes(res *http.Response) (success bool, err error) {
-	if params.statuscode != 0 {
-		if params.statuscode != res.StatusCode {
-			return false, fmt.Errorf("statuscode is %v not %v", res.StatusCode, params.statuscode)
+	if params.status != nil {
+		ok, err := params.status.CheckVal(res.StatusCode)
+		if !ok {
+			return false, fmt.Errorf("statuscode check failed: %e", err)
 		}
 	}
 
-	if params.body != "" {
+	if params.body != nil {
 		buf := new(strings.Builder)
 		io.Copy(buf, res.Body)
 		resbody := buf.String()
 
-		if resbody != params.body {
-			return false, fmt.Errorf("message body is '%v' not '%v'", resbody, params.body)
+		ok, err := params.body.CheckVal(&resbody)
+		if !ok {
+			return false, fmt.Errorf("message body check failed: %e", err)
 		}
 	}
 	return true, nil

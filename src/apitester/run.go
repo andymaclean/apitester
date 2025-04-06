@@ -15,23 +15,23 @@ func Run(opts *Options) {
 		method: "GET",
 		path:   "/hello",
 		checker: APIStringResCheck{
-			statuscode: 200,
-			body:       fmt.Sprintf("Hello from %v\n", serveraddr),
+			status: &IntEq{200},
+			body:   &StringEq{fmt.Sprintf("Hello from %v\n", serveraddr)},
 		},
 	})
 	session.RESTCall(&APITest{
 		method: "GET",
 		path:   "/foobar",
 		checker: APIStringResCheck{
-			statuscode: 404,
+			status: &IntEq{404},
 		},
 	})
 	session.RESTCall(&APITest{
 		method: "GET",
 		path:   "/exit",
 		checker: APIStringResCheck{
-			statuscode: 200,
-			body:       fmt.Sprintf("Goodbye from %v\n", serveraddr),
+			status: &IntEq{200},
+			body:   &StringEq{fmt.Sprintf("Goodbye from %v\n", serveraddr)},
 		},
 	})
 }
