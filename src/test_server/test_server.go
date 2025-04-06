@@ -9,7 +9,7 @@ import (
 )
 
 func Run() {
-	address := flag.String("Address", "localhost:6677", "Service address")
+	address := flag.String("address", "localhost:6677", "Service address")
 
 	flag.Parse()
 

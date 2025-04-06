@@ -1,0 +1,33 @@
+#!/bin/bash
+
+server_cmd=()
+
+while [[ "$1" != "--" ]]; do
+    server_cmd+=("$1")
+    shift
+done
+
+shift
+
+function kill_server() {
+    
+    j=$(jobs -p)
+    if [ -n "$j" ] ; then
+        echo "Killing background jobs"
+        kill -9 $j
+    fi
+}
+
+trap kill_server INT
+trap kill_server EXIT
+
+echo "Server: ${server_cmd[@]}"
+
+
+${server_cmd[@]} & 
+
+echo "Test: $@"
+
+"$@"
+
+wait 
