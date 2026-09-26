@@ -1,0 +1,11 @@
+tests:
+  - path: "/hello"
+    status: 200
+    body: 
+      begins: "Hello from"
+  - path: "/foobar"
+    status: 404
+  - path: "/exit"
+    status: 200
+    body: 
+      matches: "^Goodbye from localhost:[0-9]+\n$"

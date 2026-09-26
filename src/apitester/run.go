@@ -1,11 +1,33 @@
 package apitester
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"os"
+
+	"gopkg.in/yaml.v3"
+)
 
 func Run(opts *Options) {
 	if opts.Verbose {
 		fmt.Printf("APITester.\n%s", opts.Summary())
 	}
+
+	testfile, err := os.ReadFile(opts.TestFile)
+
+	if err != nil {
+		log.Fatalf("Failed to reat %v: %e", opts.TestFile, err)
+	}
+
+	var tests map[string]any
+
+	err = yaml.Unmarshal(testfile, &tests)
+
+	if err != nil {
+		log.Fatalf("Failed to parse test data: %e", err)
+	}
+
+	fmt.Printf("%v", tests)
 
 	session := NewSession(opts)
 
@@ -34,4 +56,5 @@ func Run(opts *Options) {
 			body:   &StringEq{fmt.Sprintf("Goodbye from %v\n", serveraddr)},
 		},
 	})
+
 }
